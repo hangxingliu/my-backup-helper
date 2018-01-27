@@ -1,0 +1,29 @@
+{
+	"target_dir": [
+		"./demo-env"
+	],
+	"configurations": {
+		"src": {
+			"prefix": "src-",
+			"files": [
+				"./src",
+				"./libs"
+			]
+		},
+		"etc": {
+			"prefix": "etc-",
+			"type": "7z",
+			"description": "system etc folder",
+			"password_sha1": "7c4a8d09ca3762af61e59520943dc26494f8941b",
+			"files": [
+				"/etc"
+			],
+			"exclude": [
+				"etc/ssh"
+			],
+			"exclude_recursive": [
+				"*.d"
+			]
+		}
+	}
+}

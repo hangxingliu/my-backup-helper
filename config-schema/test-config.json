@@ -1,0 +1,19 @@
+{
+	"target_dir": [
+		"/mnt/DISK_BACKUP/"
+	],
+	"configurations": {
+		"projects": {
+			"prefix": "project-backup-",
+			"files": [
+				"$HOME/projects/"
+			],
+			"exclude_recursive": [
+				"node_moudles"
+			],
+			"exclude": [
+				"archived_projects"
+			]
+		}
+	}
+}

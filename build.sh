@@ -40,6 +40,6 @@ else
 fi
 
 doing "making";
-make && success "make success!" || fatal "make failed!";
+make -j4 && success "make success!" || fatal "make failed!";
 
 exit 0;

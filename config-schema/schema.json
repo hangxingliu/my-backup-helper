@@ -1,0 +1,29 @@
+{
+	"title": "JSON schema for backup helper configurations",
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+	"properties": {
+		"target_dir": {
+			"type": "array",
+			"items": { "type": "string" }
+		},
+		"configurations": {
+			"type": "object",
+			"additionalProperties": {
+				"type": "object",
+				"properties": {
+					"sudo": { "type": "boolean", "default": false },
+					"compression_level": { "type": "number" },
+					"prefix": { "type" : "string" },
+					"description": { "type" : "string" },
+					"type": { "type" : "string", "default": "tar"  },
+					"files": { "type": "array", "items": { "type" : "string" } },
+					"exclude": { "type" : "array", "items": { "type" : "string" } },
+					"exclude_recursive": { "type" : "array", "items": { "type" : "string"} },
+					"password_sha1": { "type" : "string" }
+				},
+				"required": [ "prefix", "files" ]
+			}
+		}
+	}
+}
