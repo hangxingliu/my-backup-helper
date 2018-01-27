@@ -7,8 +7,8 @@ Liu Yue
 
 ## Third Party Libraries
 
-- [termcolor](https://github.com/ikalnytskyi/termcolor) for printing colored messages to the terminal.
-- [gason](https://github.com/vivkin/gason) for parsering JSON
+- [vog/sha1](https://github.com/vog/sha1) for sha1 encoding
+- [vivkin/gason](https://github.com/vivkin/gason) for parsering JSON
 
 ## License
 
