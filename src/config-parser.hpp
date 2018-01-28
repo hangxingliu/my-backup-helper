@@ -56,7 +56,7 @@ class ConfigParser {
 			return setInvalidConfig("configurations", "object", getJsonType(configs));
 
 		for(auto kv: configs) {
-			auto level = std::string("configurations[") + kv->key + "]";
+			auto level = std::string("configurations.") + kv->key;
 
 			JsonValue cfg = kv->value;
 			if(cfg.getTag() != JSON_OBJECT)
@@ -69,11 +69,11 @@ class ConfigParser {
 			for(auto it: cfg) {
 				if(commentJSON.isComment(it->key, it->value)) continue;
 
-				int type = validator.getItemPropertyType(level.c_str(), it->key, it->value);
+				int type = validator.getItemPropertyType(kv->key, it->key, it->value);
 				switch (type) {
 
 				case ConfigValidator::TYPE_INVALID:
-					return setInvalidConfig(validator.getError());
+					return setError(validator.getError() + '\n');
 
 				case ConfigValidator::TYPE_SUDO:
 					config.sudo = validator.getBoolean(); break;

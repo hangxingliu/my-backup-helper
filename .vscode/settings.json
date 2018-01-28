@@ -12,6 +12,7 @@
 		"*.ipp": "cpp",
 		"ratio": "cpp",
 		"type_traits": "cpp",
-		"typeinfo": "cpp"
+		"typeinfo": "cpp",
+		"system_error": "cpp"
 	}
 }

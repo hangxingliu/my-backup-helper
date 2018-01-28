@@ -1,6 +1,7 @@
 CMakeLists.txt
 libs/gason.cc
 libs/gason.hpp
+libs/rang.hpp
 libs/sha1.cc
 libs/sha1.hpp
 src/bash-completion.hpp

@@ -35,7 +35,7 @@ private:
 public:
 	std::string getError() { return error; }
 	int getItemPropertyType(const char* itemName, const char* key, JsonValue& value) {
-		std::string errorPrefix = std::string("Invalid config: configurations.") + itemName + "` ";
+		std::string errorPrefix = std::string("Invalid config: `configurations.") + itemName;
 
 		lastValue = value;
 		int len = strlen(key);

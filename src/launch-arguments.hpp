@@ -14,12 +14,14 @@ class LaunchArguments {
 public:
 	bool isVerbose = false;
 	bool isCompletion = false;
+	bool isList = false;
 	std::vector<std::string> configurations;
 
 	static void printHelp() {
 		printf("\n  Version: %s (date: %s)\n", VERSION, VERSION_DATE);
 		printf("\n  Usage: %s [options] <configuration>...  # backup", PROGRAM_NAME);
-		printf("\n         %s password|sha1|sha1sum         # test password sha1sum\n", PROGRAM_NAME);
+		printf("\n         %s password|sha1|sha1sum         # test password sha1sum", PROGRAM_NAME);
+		printf("\n         %s list [-v|--verbose]          # list all available configs\n", PROGRAM_NAME);
 		printf("\n  Options:\n\n");
 		printf("    -h, --help                 output usage information\n");
 		printf("    -V, --version              output the version number\n");
@@ -44,6 +46,10 @@ public:
 			int len = strlen(opt);
 
 			if(len == 0) continue;
+			if(i == 1 && strcmp(opt, "list") == 0) {
+				isList = true;
+				return;
+			}
 			if(i == 1 && strcmp(opt, "completion") == 0) {
 				isCompletion = true;
 				for(int j = i + 1; j < argc ; j++)

@@ -6,6 +6,8 @@
 #include <vector>
 #include <map>
 
+#include "../libs/rang.hpp"
+
 #include "./build-options.hpp"
 #include "./launch-arguments.hpp"
 #include "./config-parser.hpp"
@@ -13,6 +15,7 @@
 #include "./bash-completion.hpp"
 
 using namespace std;
+using namespace rang;
 
 bool isForCompletion = false;
 bool isForPasswordSHA1 = false;
@@ -54,14 +57,20 @@ void loadConfigFileContent() {
 }
 
 void listConfigurations(
-	FILE* stream, vector<ConfigItemInfo> configurations, string indent = "") {
+	ostream& stream, vector<ConfigItemInfo> configurations, string indent = "") {
 	for(const ConfigItemInfo& conf: configurations) {
-		string decoration = " ";
-		if(!conf.passwordSHA1.empty()) decoration += "(encrpyted) ";
-		decoration += conf.description.empty() ? "(empty description)" : conf.description;
-		fprintf(stream, "%s%s:%s\n", indent.c_str(), conf.name.c_str(), decoration.c_str());
+		stream << indent << style::bold << conf.name << style::reset << ":\t";
+
+		if(conf.sudo) stream << fg::cyan << "(sudo) " << style::reset;
+		if(!conf.passwordSHA1.empty()) stream << fg::cyan << "(encrypt) " << style::reset;
+		if(!conf.type.empty()) stream << fg::cyan << "(" << conf.type << ") " << style::reset;
+
+		if(conf.description.empty())
+			stream << style::dim << "empty description" << style::reset << endl;
+		else
+			stream << conf.description << endl;
 	}
-	fputs("\n", stream);
+	stream << endl;
 }
 vector<ConfigItemInfo> findConfigurationsByNames(
 	vector<ConfigItemInfo> configurations, vector<string> names) {
@@ -74,9 +83,10 @@ vector<ConfigItemInfo> findConfigurationsByNames(
 	for(auto name: names) {
 		auto matched = allConf.find(name);
 		if(matched == allConf.end()) {
-			fprintf(stderr, "\n  error: unknown backup config name: `%s`\n", name.c_str());
-			fprintf(stderr, "\n  available:\n");
-			listConfigurations(stderr, configurations, "    ");
+			cerr << fg::red << "\n  error: unknown backup config name: `" <<
+				name << "`" << fg::reset << endl;
+			cerr << "\n  available configurations:\n\n";
+			listConfigurations(cerr, configurations, "    ");
 			exit(1);
 		}
 		auto storaged = resultMap.find(name);
@@ -124,8 +134,14 @@ int main(int argc, char* argv[]) {
 	ConfigParser parser(configFileContent, configFilePath);
 	auto configs = parser.getAllConfigurations();
 	if(!parser.getError().empty()) {
-		fprintf(stderr, "\n  error: %s\n", parser.getError().c_str());
+		cerr << endl << fg::red << "  error: " << parser.getError() << style::reset << endl;
 		return 1;
+	}
+
+	if(argument.isList) {
+		cout << endl << style::bold << "  available configurations:" << style::reset << endl << endl;
+		listConfigurations(cerr, parser.getAllConfigurations(), "    ");
+		return 0;
 	}
 
 	if(isForCompletion && argument.configurations.size() >= 1) {
@@ -135,7 +151,7 @@ int main(int argc, char* argv[]) {
 
 		auto opts = argument.configurations;
 		if(atoi(opts[0].c_str()) == 1) { // completion location is 1
-			vector<string> actions = {"password", "sha1sum", "sha1", "completion"};
+			vector<string> actions = {"password", "sha1sum", "sha1", "completion", "list"};
 			result.insert(result.end(), actions.begin(), actions.end());
 		}
 		if(opts.size() >= 2 && opts[1][0] == '-') {
@@ -162,7 +178,9 @@ int main(int argc, char* argv[]) {
 			targetDir += '/';
 		fileName = targetDir + fileName;
 
-		printf("\n  ======  configuration name: %s  ========\n", config.name.c_str());
+		cout << endl << style::bold
+			<< "  ======  configuration name: " << config.name << "  ========"
+			<< style::reset << endl;
 		printf("  target file:       %s\n", fileName.c_str());
 		printf("  backup files:      %zu\n", config.files.size());
 		printf("  excludes/recusive: %zu/%zu\n\n", config.exclude.size(), config.excludeRecursive.size());
@@ -171,11 +189,13 @@ int main(int argc, char* argv[]) {
 		const char* cmd = _cmd.c_str();
 
 		if(argument.isVerbose) {
+			cout << fg::blue;
 			printf("\nVERBOSE INFO >>>\n");
 			puts(config.toString("  ").c_str());
 			puts("  command:");
 			printf("    %s\n", command.generate(fileName, config, true).c_str());
 			puts("VERBOSE INFO <<<\n");
+			cout << style::reset;
 		}
 
 		printf("  info: executing compress command ...\n");
@@ -185,7 +205,8 @@ int main(int argc, char* argv[]) {
 			exit(1);
 		}
 	}
-
-	printf("\n  success: backed up %zu configurations!\n\n", matchedConfigs.size());
+	cout << endl << fg::green << style::bold
+		 << "  success: backed up " << matchedConfigs.size() << " configurations!"
+		 << style::reset << endl << endl;
 	return 0;
 }

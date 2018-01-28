@@ -78,6 +78,7 @@ sudo ./install.sh # install it to /usr/local/bin/backup-helper
 
 - [vog/sha1](https://github.com/vog/sha1) for sha1 encoding
 - [vivkin/gason](https://github.com/vivkin/gason) for parsering JSON [**MIT**]
+- [agauniyal/rang](https://github.com/agauniyal/rang/) for displaying colored text in terminal
 
 ## License
 
