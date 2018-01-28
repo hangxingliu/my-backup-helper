@@ -27,15 +27,16 @@ function check_compile_result() {
 	echo -e "${SUCCESS}[~] success!${RESET}";
 }
 
+[[ -d "out" ]] || mkdir "out";
+
 echo "[.] compiling wordexp.cc ...";
 g++ "wordexp.cc" "../src/utils.cc" \
-	-o "wordexp.out" \
+	-o "out/wordexp.out" \
 	-O2 -Wall;
 check_compile_result;
 
 echo "[.] compiling test-gason.cc ...";
 g++ "test-gason.cc" "../libs/gason.cc" \
-	-o "test-gason.out" \
+	-o "out/test-gason.out" \
 	-O2 -Wall;
 check_compile_result;
-

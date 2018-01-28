@@ -4,7 +4,7 @@ bin
 demo-env
 
 # test binary files
-test/*.out
+test/out
 
 # qt creator files:
 *.creator.user

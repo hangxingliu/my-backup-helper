@@ -2,13 +2,16 @@
 	"json.schemas": [{
 		"fileMatch": [
 			"config-schema/test-config.json",
-			"backup-config.debug.json"
+			"backup-config.debug.json",
+			".backup-config.json",
+			"backup-config.json"
 		],
 		"url": "./config-schema/schema.json"
 	}],
 	"files.associations": {
 		"*.ipp": "cpp",
 		"ratio": "cpp",
-		"type_traits": "cpp"
+		"type_traits": "cpp",
+		"typeinfo": "cpp"
 	}
 }
