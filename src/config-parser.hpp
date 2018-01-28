@@ -6,6 +6,7 @@
 #include "../libs/gason.hpp"
 
 #include "./config-parser-validator.hpp"
+#include "./config-parser-comments.hpp"
 #include "./config-item.hpp"
 #include "./utils.hpp"
 
@@ -21,6 +22,7 @@ class ConfigParser {
 	std::string fileContent;
 	std::string filePath;
 
+	CommentsInJSON commentJSON;
 	char* jsonStr = nullptr;
 	JsonValue json;
 
@@ -40,7 +42,9 @@ class ConfigParser {
 		if(!isStringArrayValue(targetDir, "target_dir", error))
 			return setInvalidConfig(error.description);
 
-		targetDirectories = expandPOSIXShellStrings(getStringArrayValues(targetDir), error);
+		targetDirectories = expandPOSIXShellStrings(
+			commentJSON.removeCommentsInStringArray(
+				getStringArrayValues(targetDir)), error);
 		if(error.hasError)
 			return setInvalidConfig(error.description + "(" + std::to_string(error.errorCode)+ ")");
 		return true;
@@ -63,6 +67,8 @@ class ConfigParser {
 
 			std::vector<std::string> files;
 			for(auto it: cfg) {
+				if(commentJSON.isComment(it->key, it->value)) continue;
+
 				int type = validator.getItemPropertyType(level.c_str(), it->key, it->value);
 				switch (type) {
 
@@ -93,7 +99,8 @@ class ConfigParser {
 
 				case ConfigValidator::TYPE_FILES:
 				case ConfigValidator::TYPE_EXCLUDE:
-					files = expandPOSIXShellStrings(validator.getStrings(), error);
+					files = expandPOSIXShellStrings(
+						commentJSON.removeCommentsInStringArray(validator.getStrings()), error);
 					if(error.hasError)
 						return setInvalidConfig(error.description +
 							"(" + std::to_string(error.errorCode)+ ")");
@@ -105,7 +112,8 @@ class ConfigParser {
 					break;
 
 				case ConfigValidator::TYPE_EXCLUDE_RECURSIVE:
-					config.excludeRecursive = validator.getStrings();
+					config.excludeRecursive =
+						commentJSON.removeCommentsInStringArray(validator.getStrings());
 					break;
 				}
 			}
@@ -120,12 +128,11 @@ class ConfigParser {
 	bool parse() {
 		if(parsed) return error.empty();
 
-		int status;
 		char* endPtr;
 		jsonStr = strdup(fileContent.c_str());
 		JsonAllocator allocator;
 
-		status = jsonParse(jsonStr, &endPtr, &json, allocator);
+		int status = jsonParse(jsonStr, &endPtr, &json, allocator);
 		parsed = true;
 
 		if(status != JSON_OK) {
@@ -139,18 +146,18 @@ class ConfigParser {
 
 		for(auto it: json) {
 			const char* key = it->key;
+			bool ok = false;
 
-			if(strcmp(key, "target_dir") == 0) {
-				if(!parseTargetDirArray(it->value))
-					return false;
-			} else if(strcmp(key, "configurations") == 0){
-				if(!parseConfigurationsMap(it->value))
-					return false;
-			} else {
+			if(commentJSON.isComment(key, it->value)) continue;
+			if(strcmp(key, "target_dir") == 0)
+				ok = parseTargetDirArray(it->value);
+			else if(strcmp(key, "configurations") == 0)
+				ok = parseConfigurationsMap(it->value);
+			else
 				setInvalidConfig(std::string("unknown property: `") + key +
 					"` as type " + getJsonType(it->value));
-				return false;
-			}
+
+			if(!ok) return false;
 		}
 		return true;
 	}

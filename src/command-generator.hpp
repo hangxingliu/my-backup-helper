@@ -16,7 +16,7 @@ class CommandGenerator {
 	/// hash to password
 	std::map<std::string, std::string> passwordMap;
 public:
-	std::string generate(std::string targetFile, ConfigItemInfo config) {
+	std::string generate(std::string targetFile, ConfigItemInfo config, bool hidePassword = false) {
 		std::vector<std::string> opts;
 
 		opts.push_back("a");
@@ -36,8 +36,20 @@ public:
 			} else {
 				password = stored->second;
 			}
-			opts.push_back(std::string("-p") + password);
+
+			if(hidePassword) {
+				std::string hiddenPassword = "";
+				for(unsigned int i = 0 , j = password.length(); i < j ; i ++ )
+					hiddenPassword += '*';
+				opts.push_back(std::string("-p") + hiddenPassword);
+			} else {
+				opts.push_back(std::string("-p") + password);
+			}
 		}
+
+		// add compressin level options
+		if(config.compressionLevel >= 0)
+			opts.push_back(std::string("-mx") + std::to_string(config.compressionLevel));
 
 		// add exclude options
 		for(auto exclude: config.exclude)
@@ -48,7 +60,8 @@ public:
 		for(auto file: config.files)
 			opts.push_back(file);
 
-		return std::string(COMPRESSOR) + " " + shellEscape(opts);
+		std::string prefix = config.sudo ? (std::string("sudo ") + COMPRESSOR): std::string(COMPRESSOR);
+		return std::string(prefix) + " " + shellEscape(opts);
 	}
 };
 

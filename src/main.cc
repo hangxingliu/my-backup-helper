@@ -154,7 +154,7 @@ int main(int argc, char* argv[]) {
 	CommandGenerator command;
 
 	auto matchedConfigs = findConfigurationsByNames(configs, argument.configurations);
-	for(const ConfigItemInfo& config: matchedConfigs) {
+	for(ConfigItemInfo& config: matchedConfigs) {
 		string fileName = config.prefix + getNowDateTimeString() + "." +
 			(config.type.empty() ? string(DEFAULT_TYPE) : config.type);
 
@@ -168,9 +168,17 @@ int main(int argc, char* argv[]) {
 		printf("  excludes/recusive: %zu/%zu\n\n", config.exclude.size(), config.excludeRecursive.size());
 
 		auto _cmd = command.generate(fileName, config);
-		// cout << _cmd << endl;
-		printf("  info: executing compress command ...\n"); //color code: dim
 		const char* cmd = _cmd.c_str();
+
+		if(argument.isVerbose) {
+			printf("\nVERBOSE INFO >>>\n");
+			puts(config.toString("  ").c_str());
+			puts("  command:");
+			printf("    %s\n", command.generate(fileName, config, true).c_str());
+			puts("VERBOSE INFO <<<\n");
+		}
+
+		printf("  info: executing compress command ...\n");
 		int code = system(cmd);
 		if(code != 0) {
 			fprintf(stderr, "\n  error: compress failed!\n  details: %s\n\n", cmd);
@@ -178,6 +186,6 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	printf("\n  success: backed up %zu configurations!\n\n", configs.size());
+	printf("\n  success: backed up %zu configurations!\n\n", matchedConfigs.size());
 	return 0;
 }

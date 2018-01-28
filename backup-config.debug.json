@@ -1,7 +1,10 @@
 {
 	"target_dir": [
+		"// I am a comment starts with two slashes and a space",
 		"./demo-env"
 	],
+
+	"// These are some configurations following": "comment",
 	"configurations": {
 		"src": {
 			"prefix": "src-",
@@ -10,18 +13,41 @@
 				"./libs"
 			]
 		},
+		"src-7z-0": {
+			"prefix": "src-7z0-",
+			"type": "7z",
+			"compression_level": 0,
+			"files": [
+				"./src",
+				"./libs"
+			]
+		},
+		"src-7z-9": {
+			"prefix": "src-7z9-",
+			"type": "7z",
+			"// max compression level": "comment",
+			"compression_level": 9,
+			"files": [
+				"./src",
+				"./libs"
+			]
+		},
 		"etc": {
 			"prefix": "etc-",
 			"type": "7z",
+			"sudo": true,
 			"description": "system etc folder",
 			"password_sha1": "7c4a8d09ca3762af61e59520943dc26494f8941b",
 			"files": [
+				"// system config dir",
 				"/etc"
 			],
 			"exclude": [
+				"// exclude ssh configurations",
 				"etc/ssh"
 			],
 			"exclude_recursive": [
+				"// exclude *.d directories",
 				"*.d"
 			]
 		}

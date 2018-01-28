@@ -7,7 +7,7 @@
 class ConfigItemInfo {
 	std::string error = "";
 	bool setError(std::string e) {
-		e = error;
+		error = e;
 		return false;
 	}
 
@@ -35,24 +35,24 @@ public:
 	std::string getInvalidReason() {
 		return error;
 	}
-	std::string toString() {
-		auto str = std::string("ConfigItemInfo (") + name + ") {\n" +
-			"  sudo: " + ( sudo ? "true" : "false" ) + "\"\n" +
-			"  prefix: \"" + prefix + "\"\n" +
-			"  type: \"" + type + "\"\n" +
-			"  description: \"" + description + "\"\n" +
-			"  passwordSHA1: \"" + passwordSHA1 + "\"\n" +
-			"  compressionLevel: " +
+	std::string toString(std::string indent = "") {
+		auto str = indent + "ConfigItemInfo (" + name + ") {\n" +
+			indent + "  sudo: " + ( sudo ? "true" : "false" ) + "\"\n" +
+			indent + "  prefix: \"" + prefix + "\"\n" +
+			indent + "  type: \"" + type + "\"\n" +
+			indent + "  description: \"" + description + "\"\n" +
+			indent + "  passwordSHA1: \"" + passwordSHA1 + "\"\n" +
+			indent + "  compressionLevel: " +
 				(compressionLevel < 0 ? "auto" : std::to_string(compressionLevel)) + "\n";
 
-		str += "  files:\n";
-		for(auto file: files) str += "    " + file + "\n";
+		str += indent + "  files:\n";
+		for(auto file: files) str += indent + "    \"" + file + "\"\n";
 
-		str += "  excludes:\n";
-		for(auto ex: exclude) str += "    " + ex + "\n";
-		str += "  excludes(recursive):\n";
-		for(auto ex: excludeRecursive) str += "    " + ex + "\n";
-		str += "}\n";
+		str += indent + "  excludes:\n";
+		for(auto ex: exclude) str += indent + "    \"" + ex + "\"\n";
+		str += indent + "  excludes(recursive):\n";
+		for(auto ex: excludeRecursive) str += indent + "    \"" + ex + "\"\n";
+		str += indent + "}\n";
 		return str;
 	}
 };

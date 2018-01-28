@@ -9,6 +9,7 @@ src/build-options.cc
 src/build-options.hpp
 src/command-generator.hpp
 src/config-item.hpp
+src/config-parser-comments.hpp
 src/config-parser-validator.hpp
 src/config-parser.hpp
 src/launch-arguments.hpp
@@ -17,5 +18,6 @@ src/main.cc
 src/password-input.hpp
 src/utils.cc
 src/utils.hpp
+test/compile.sh
 test/test-gason.cc
 test/wordexp.cc
