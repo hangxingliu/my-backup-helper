@@ -13,6 +13,7 @@
 class LaunchArguments {
 public:
 	bool isVerbose = false;
+	bool isCompletion = false;
 	std::vector<std::string> configurations;
 
 	static void printHelp() {
@@ -23,6 +24,9 @@ public:
 		printf("    -h, --help                 output usage information\n");
 		printf("    -V, --version              output the version number\n");
 		printf("    -v, --verbose              output verbose information in backup\n");
+		printf("\n  Advanced:\n\n");
+		printf("    Install bash completion: `%s completion >> ~/.bashrc`\n", PROGRAM_NAME);
+		printf("    Bash completion principle: `%s completion ${COMP_CWORD} ${CURRENT_WORD}`\n", PROGRAM_NAME);
 		printf("\n");
 		exit(0);
 	}
@@ -40,6 +44,13 @@ public:
 			int len = strlen(opt);
 
 			if(len == 0) continue;
+			if(i == 1 && strcmp(opt, "completion") == 0) {
+				isCompletion = true;
+				for(int j = i + 1; j < argc ; j++)
+					configurations.push_back(argv[j]);
+				return;
+			}
+
 			if(strcmp(opt, "-h") == 0 || strcmp(opt, "--help") == 0) {
 				printHelp();
 			} else if (strcmp(opt, "-V") == 0 || strcmp(opt, "--version") == 0) {
@@ -56,9 +67,6 @@ public:
 		}
 	}
 
-	bool isCompletion() {
-		return configurations.size() >= 1 && configurations[0] == "completion";
-	}
 	bool isTestPassword() {
 		return configurations.size() >= 1 && (
 			configurations[0] == "password" ||

@@ -3,6 +3,8 @@ libs/gason.cc
 libs/gason.hpp
 libs/sha1.cc
 libs/sha1.hpp
+src/bash-completion.hpp
+src/bash-completion.sh
 src/build-options.cc
 src/build-options.hpp
 src/command-generator.hpp

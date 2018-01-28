@@ -10,6 +10,7 @@
 #include "./launch-arguments.hpp"
 #include "./config-parser.hpp"
 #include "./command-generator.hpp"
+#include "./bash-completion.hpp"
 
 using namespace std;
 
@@ -90,11 +91,22 @@ vector<ConfigItemInfo> findConfigurationsByNames(
 	return result;
 }
 
+// ==============================================
+//
+//       M  a  i  n    F u n c t i o n
+//
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 int main(int argc, char* argv[]) {
 
 	LaunchArguments argument(argc, argv);
-	isForCompletion = argument.isCompletion();
+	isForCompletion = argument.isCompletion;
 	isForPasswordSHA1 = argument.isTestPassword();
+
+	if(isForCompletion && argument.configurations.size() == 0) {
+		// only one word `completion` for displaying bash completion scripts
+		cout << BashCompletion::getCompletionScripts();
+		return 0;
+	}
 
 	if(isForPasswordSHA1) {
 		int count = 1;
@@ -116,9 +128,22 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	if(isForCompletion) {
+	if(isForCompletion && argument.configurations.size() >= 1) {
+		vector<string> result;
 		for(const ConfigItemInfo& config: configs)
-			cout << config.name << " ";
+			result.push_back(config.name);
+
+		auto opts = argument.configurations;
+		if(atoi(opts[0].c_str()) == 1) { // completion location is 1
+			vector<string> actions = {"password", "sha1sum", "sha1", "completion"};
+			result.insert(result.end(), actions.begin(), actions.end());
+		}
+		if(opts.size() >= 2 && opts[1][0] == '-') {
+			vector<string> options = {"-h", "-v", "-V", "--help", "--version", "--verbose"};
+			result.insert(result.end(), options.begin(), options.end());
+		}
+		for(auto word: result)
+			cout << word << " ";
 		cout << endl;
 		return 0;
 	}
