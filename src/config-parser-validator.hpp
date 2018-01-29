@@ -25,9 +25,9 @@ private:
 	JsonValue lastValue;
 
 	std::string error;
-	int setError(std::string e) { error = e; return TYPE_INVALID; }
+	int setError(const std::string& e) { error = e; return TYPE_INVALID; }
 	int setError(
-		std::string prefix, std::string key, std::string expectType, JsonValue& value) {
+		const std::string& prefix, const std::string& key, const std::string& expectType, JsonValue& value) {
 		return setError(prefix + "." + key + "` is not " + expectType +
 			", but actual is " + getJsonType(value));
 	}

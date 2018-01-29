@@ -15,6 +15,7 @@ public:
 	bool isVerbose = false;
 	bool isCompletion = false;
 	bool isList = false;
+	bool isTestPasswordSha1 = false;
 	std::vector<std::string> configurations;
 
 	static void printHelp() {
@@ -46,15 +47,23 @@ public:
 			int len = strlen(opt);
 
 			if(len == 0) continue;
-			if(i == 1 && strcmp(opt, "list") == 0) {
-				isList = true;
-				return;
-			}
-			if(i == 1 && strcmp(opt, "completion") == 0) {
-				isCompletion = true;
-				for(int j = i + 1; j < argc ; j++)
-					configurations.push_back(argv[j]);
-				return;
+			if(i == 1) {
+				if(strcmp(opt, "list") == 0) {
+					isList = true;
+					return;
+				}
+				if(strcmp(opt, "password") == 0 ||
+					strcmp(opt, "sha1") == 0 ||
+					strcmp(opt, "sha1sum") == 0) {
+					isTestPasswordSha1 = true;
+					return;
+				}
+				if(strcmp(opt, "completion") == 0) {
+					isCompletion = true;
+					for(int j = i + 1; j < argc ; j++)
+						configurations.push_back(argv[j]);
+					return;
+				}
 			}
 
 			if(strcmp(opt, "-h") == 0 || strcmp(opt, "--help") == 0) {
@@ -72,14 +81,6 @@ public:
 			}
 		}
 	}
-
-	bool isTestPassword() {
-		return configurations.size() >= 1 && (
-			configurations[0] == "password" ||
-			configurations[0] == "sha1sum" ||
-			configurations[0] == "sha1");
-	}
-
 };
 
 #endif // LAUNCHARGUMENTS_HPP

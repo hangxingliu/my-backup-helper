@@ -16,7 +16,7 @@ class CommandGenerator {
 	/// hash to password
 	std::map<std::string, std::string> passwordMap;
 public:
-	std::string generate(std::string targetFile, ConfigItemInfo config, bool hidePassword = false) {
+	std::string generate(const std::string& targetFile, ConfigItemInfo config, bool hidePassword = false) {
 		std::vector<std::string> opts;
 
 		opts.push_back("a");

@@ -12,7 +12,7 @@ public:
 	int errorCode = 0;
 	std::string description;
 	void reset() { hasError = false; errorCode = 0; }
-	bool setError(int code, std::string desc) {
+	bool setError(int code, const std::string& desc) {
 		hasError = true;
 		errorCode = code;
 		description = desc;
@@ -20,9 +20,9 @@ public:
 	}
 };
 
-std::vector<std::string> expandPOSIXShellString(std::string string, UtilsError& error);
+std::vector<std::string> expandPOSIXShellString(const std::string& string, UtilsError& error);
 std::vector<std::string> expandPOSIXShellStrings(std::vector<std::string> strings, UtilsError& error);
-bool isStringArrayValue(JsonValue& value, std::string valueName, UtilsError& error);
+bool isStringArrayValue(JsonValue& value, const std::string& valueName, UtilsError& error);
 std::vector<std::string> getStringArrayValues(JsonValue& value);
 std::string readString(FILE* file);
 std::string getJsonType(JsonValue& value);

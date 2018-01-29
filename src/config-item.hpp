@@ -1,12 +1,18 @@
+#include <iostream>
 #include <string>
 #include <vector>
+
+#include "../libs/rang.hpp"
+
+#include "./build-options.hpp"
+#include "./utils.hpp"
 
 #ifndef CONFIGITEM_HPP
 #define CONFIGITEM_HPP
 
 class ConfigItemInfo {
 	std::string error = "";
-	bool setError(std::string e) {
+	bool setError(const std::string& e) {
 		error = e;
 		return false;
 	}
@@ -35,7 +41,7 @@ public:
 	std::string getInvalidReason() {
 		return error;
 	}
-	std::string toString(std::string indent = "") {
+	std::string toString(const std::string& indent = "") {
 		auto str = indent + "ConfigItemInfo (" + name + ") {\n" +
 			indent + "  sudo: " + ( sudo ? "true" : "false" ) + "\"\n" +
 			indent + "  prefix: \"" + prefix + "\"\n" +
@@ -54,6 +60,34 @@ public:
 		for(auto ex: excludeRecursive) str += indent + "    \"" + ex + "\"\n";
 		str += indent + "}\n";
 		return str;
+	}
+	void printOneLineToStream(std::ostream& stream, const std::string& indent = "") {
+		stream << indent << rang::style::bold << name << rang::style::reset << ":\t";
+
+		if(sudo) stream << rang::fg::cyan << "(sudo) " << rang::style::reset;
+		if(!passwordSHA1.empty()) stream << rang::fg::cyan << "(encrypt) " << rang::style::reset;
+		if(!type.empty()) stream << rang::fg::cyan << "(" << type << ") " << rang::style::reset;
+
+		if(description.empty())
+			stream << rang::style::dim << "empty description" << rang::style::reset << std::endl;
+		else
+			stream << description << std::endl;
+	}
+	std::string getTargetFileName(const std::string& targetDir) {
+		std::string fileName = prefix + getNowDateTimeString() + "." +
+			(type.empty() ? std::string(DEFAULT_TYPE) : type);
+
+		return targetDir + (targetDir.back() != '/' ? "/" : "") + fileName;
+	}
+
+
+	static void printItemsToStream(
+			std::ostream& stream,
+			std::vector<ConfigItemInfo> confs,
+			const std::string& indent = "") {
+		for(ConfigItemInfo& conf: confs)
+			conf.printOneLineToStream(stream, indent);
+		stream << "\n";
 	}
 };
 

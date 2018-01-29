@@ -13,16 +13,15 @@
 
 #include "../libs/gason.hpp"
 
-std::vector<std::string> expandPOSIXShellString(std::string string, UtilsError& error) {
+std::vector<std::string> expandPOSIXShellString(const std::string& string, UtilsError& error) {
 	std::vector<std::string> result;
 
 	wordexp_t exp;
-	char** strings;
 
 	error.reset();
 	int errorCode = wordexp(string.c_str(), &exp, 0);
 	if(errorCode == 0) {
-		strings = exp.we_wordv;
+		char** strings = exp.we_wordv;
 		for (unsigned int i = 0; i < exp.we_wordc; i++)
 			result.push_back(std::string(strings[i]));
 		wordfree(&exp);
@@ -61,7 +60,7 @@ std::vector<std::string> expandPOSIXShellStrings(std::vector<std::string> string
 	return results;
 }
 
-bool isStringArrayValue(JsonValue& value, std::string valueName, UtilsError& error) {
+bool isStringArrayValue(JsonValue& value, const std::string& valueName, UtilsError& error) {
 	std::string errPrefix = std::string("`") + valueName;
 	error.reset();
 
@@ -117,7 +116,7 @@ std::string chooseAvailableDir(std::vector<std::string> dirs) {
 		if(stat(dir.c_str(), &st) == 0)
 			if(S_ISDIR(st.st_mode))
 				return dir;
-	fprintf(stderr, "\n  error: all target directories is unavailable:\n");
+	fprintf(stderr, "\n  error: all target directories are unavailable:\n\n");
 	for(auto dir: dirs)
 		fprintf(stderr, "    %s\n", dir.c_str());
 	fprintf(stderr, "\n");

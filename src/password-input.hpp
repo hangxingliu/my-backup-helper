@@ -5,20 +5,21 @@
 #include <string>
 
 #include "../libs/sha1.hpp"
+#include "../libs/rang.hpp"
 
-#ifndef PASSWORDINPUT_HPP
-#define PASSWORDINPUT_HPP
+#ifndef PASSWORD_INPUT_HPP
+#define PASSWORD_INPUT_HPP
 
 class PasswordInput {
 public:
 	std::string plain;
 	std::string sha1;
 private:
-	PasswordInput(std::string plain, std::string sha1):
+	PasswordInput(const std::string& plain, const std::string& sha1):
 		plain(plain), sha1(sha1) {}
 
 public:
-	static PasswordInput input(std::string prompt = "") {
+	static PasswordInput input(const std::string& prompt = "") {
 		if(prompt.empty())
 			std::cout << "\n  input: password for encrypting backup file: ";
 		else
@@ -47,6 +48,22 @@ public:
 		return PasswordInput(pwd, sha1);
 	}
 
+
+	static int startPwd2Sha1REPL() {
+		int count = 1;
+		std::cout << rang::style::bold << "\nPassword to sha1sum REPL:" << rang::style::reset << "\n";
+		while(1) {
+			auto pwd = input( std::string("\n  (") +
+				std::to_string(count++) + ") Input plain password: " );
+
+			std::cout << "\n" << rang::style::bold << "  sha1sum: " << rang::style::reset;
+			std::cout << pwd.sha1;
+			if(pwd.plain.empty())
+				std::cout << rang::style::dim << " (empty)" << rang::style::reset;
+			std::cout << "\n";
+		}
+		return 0;
+	}
 };
 
-#endif // PASSWORDINPUT_HPP
+#endif // PASSWORD_INPUT_HPP

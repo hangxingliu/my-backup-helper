@@ -27,10 +27,10 @@ class ConfigParser {
 	JsonValue json;
 
 	std::string error = "";
-	bool setError(std::string e) {error = e; return false; }
-	bool setInvalidConfig(std::string details) {
+	bool setError(const std::string& e) {error = e; return false; }
+	bool setInvalidConfig(const std::string& details) {
 		return setError(std::string("Invalid config: ") + details + "\n"); }
-	bool setInvalidConfig(std::string name, std::string expect, std::string actual) {
+	bool setInvalidConfig(const std::string& name, const std::string& expect, const std::string& actual) {
 		return setError(std::string("Invalid config: `") + name +
 			"` is not " + expect + ", but " + actual + ".\n"); }
 
@@ -164,7 +164,7 @@ class ConfigParser {
 	// ================================
 
 public:
-	ConfigParser(std::string fileContent, std::string filePath):
+	ConfigParser(const std::string& fileContent, const std::string& filePath):
 		fileContent(fileContent), filePath(filePath) {}
 	~ConfigParser() { if(jsonStr != nullptr) free(jsonStr); }
 

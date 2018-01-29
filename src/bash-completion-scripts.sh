@@ -1,26 +1,26 @@
 #!/usr/bin/env bash
 
 SELF="${BASH_SOURCE[0]}";
-TARGET="$(dirname "$SELF")/bash-completion.hpp";
+TARGET="$(dirname "$SELF")/bash-completion-scripts.hpp";
 PREFIX='// ========================================================
 //    WARNING!!  Don'\''t modify this file manually
-//        It was generated from file `bash-completion.sh`
+//        It was generated from file `bash-completion-scripts.sh`
 // ========================================================
 
 #include <string>
 
-#ifndef BASH_COMPLETION_HPP
-#define BASH_COMPLETION_HPP
+#ifndef BASH_COMPLETION_SCRIPTS_HPP
+#define BASH_COMPLETION_SCRIPTS_HPP
 
-class BashCompletion {
+class BashCompletionScripts {
 public:
-	static std::string getCompletionScripts() {
+	static std::string get() {
 		return std::string("\n") +';
 
 SUFFIX='			"\n";
 	}
 };
-#endif // BASH_COMPLETION_HPP';
+#endif // BASH_COMPLETION_SCRIPTS_HPP';
 
 
 echo "$PREFIX" > "$TARGET";
