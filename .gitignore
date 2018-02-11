@@ -1,4 +1,9 @@
+# target folders
 bin
+cmake-build*
+
+# idea
+.idea
 
 # demo-env
 demo-env

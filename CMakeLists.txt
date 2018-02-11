@@ -14,7 +14,9 @@ endif()
 # ============================
 
 file(GLOB_RECURSE SOURCE_FILES .
-    "libs/*.cc"
-	"src/*.cc")
+        "libs/*.cc"
+        "libs/*.hpp"
+        "src/*.hpp"
+	    "src/*.cc")
 add_executable(${TARGET_NAME} ${SOURCE_FILES})
 install(TARGETS ${TARGET_NAME} DESTINATION bin)

@@ -16,14 +16,14 @@
 std::vector<std::string> expandPOSIXShellString(const std::string& string, UtilsError& error) {
 	std::vector<std::string> result;
 
-	wordexp_t exp;
+	wordexp_t exp{};
 
 	error.reset();
 	int errorCode = wordexp(string.c_str(), &exp, 0);
 	if(errorCode == 0) {
 		char** strings = exp.we_wordv;
 		for (unsigned int i = 0; i < exp.we_wordc; i++)
-			result.push_back(std::string(strings[i]));
+			result.emplace_back(std::string(strings[i]));
 		wordfree(&exp);
 		return result;
 	}
@@ -48,7 +48,7 @@ std::vector<std::string> expandPOSIXShellString(const std::string& string, Utils
 }
 std::vector<std::string> expandPOSIXShellStrings(std::vector<std::string> strings, UtilsError& error) {
 	std::vector<std::string> results;
-	for(auto string: strings) {
+	for(auto& string: strings) {
 		std::vector<std::string> result = expandPOSIXShellString(string, error);
 		if(error.hasError) {
 			error.setError(error.errorCode, std::string("\"") + string + "\" is invalid: "
@@ -81,7 +81,7 @@ std::vector<std::string> getStringArrayValues(JsonValue& value) {
 	std::vector<std::string>  result;
 	for(auto kv: value) {
 		JsonValue item = kv->value;
-		result.push_back(std::string(item.toString()));
+		result.emplace_back(std::string(item.toString()));
 	}
 	return result;
 }
@@ -89,7 +89,7 @@ std::vector<std::string> getStringArrayValues(JsonValue& value) {
 std::string readString(FILE* file) {
 	std::string result = "";
 	char buffer[4097];
-	int readLen = 0;
+	size_t readLen = 0;
 	while((readLen = fread(buffer, 1, 4096, file)) > 0 ) {
 		buffer[readLen] = 0;
 		result += std::string(buffer);
@@ -111,13 +111,13 @@ std::string getJsonType(JsonValue& value) {
 }
 
 std::string chooseAvailableDir(std::vector<std::string> dirs) {
-	struct stat st;
+	struct stat st{};
 	for(auto dir: dirs)
 		if(stat(dir.c_str(), &st) == 0)
 			if(S_ISDIR(st.st_mode))
 				return dir;
 	fprintf(stderr, "\n  error: all target directories are unavailable:\n\n");
-	for(auto dir: dirs)
+	for(auto& dir: dirs)
 		fprintf(stderr, "    %s\n", dir.c_str());
 	fprintf(stderr, "\n");
 	exit(1);
@@ -143,10 +143,10 @@ std::string shellEscape(std::vector<std::string> args) {
 	// inspired from:
 	// https://github.com/xxorax/node-shell-escape/blob/master/shell-escape.js
 	std::vector<std::string> escaped;
-	for(auto arg: args) {
+	for(auto& arg: args) {
 		const char* reader = arg.c_str();
 
-		char* str = (char*) malloc(arg.length() * 4);
+		auto str = (char*) malloc(arg.length() * 4);
 		str[0] = singleQuote;
 		char* writer = str + 1;
 		while(*reader) {
@@ -163,7 +163,7 @@ std::string shellEscape(std::vector<std::string> args) {
 		}
 		*writer++ = singleQuote;
 		*writer = 0;
-		escaped.push_back(std::string(str));
+		escaped.emplace_back(std::string(str));
 		free(str);
 	}
 

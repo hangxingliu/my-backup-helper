@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <utility>
 
 #include "../libs/sha1.hpp"
 #include "../libs/rang.hpp"
@@ -15,8 +16,8 @@ public:
 	std::string plain;
 	std::string sha1;
 private:
-	PasswordInput(const std::string& plain, const std::string& sha1):
-		plain(plain), sha1(sha1) {}
+	PasswordInput(std::string plain, std::string sha1):
+		plain(std::move(plain)), sha1(std::move(sha1)) {}
 
 public:
 	static PasswordInput input(const std::string& prompt = "") {
@@ -24,22 +25,19 @@ public:
 			std::cout << "\n  input: password for encrypting backup file: ";
 		else
 			std::cout << prompt;
-		termios oldt;
-		tcgetattr(STDIN_FILENO, &oldt);
-		termios newt = oldt;
-		newt.c_lflag &= ~ECHO;
+		termios oldAttr{};
+		tcgetattr(STDIN_FILENO, &oldAttr);
+		termios newAttr = oldAttr;
+		newAttr.c_lflag &= ~ECHO;
 
-		tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+		// hide password
+		tcsetattr(STDIN_FILENO, TCSANOW, &newAttr);
 		std::string pwd;
 		std::getline(std::cin, pwd);
-		tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+		tcsetattr(STDIN_FILENO, TCSANOW, &oldAttr);
 
-		int len = pwd.length();
-		char* hide = (char*) malloc(len + 1);
-		for(int i = 0 ; i < len ; i ++ ) hide[i] = '*';
-		hide[len] = 0;
-
-		std::cout << std::string(hide) << std::endl;
+		// display *****
+		std::cout << std::string(pwd.length(), '*') << std::endl;
 
 		SHA1 hash;
 		hash.update(pwd);
@@ -48,13 +46,12 @@ public:
 		return PasswordInput(pwd, sha1);
 	}
 
-
 	static int startPwd2Sha1REPL() {
-		int count = 1;
+		int count = 0;
 		std::cout << rang::style::bold << "\nPassword to sha1sum REPL:" << rang::style::reset << "\n";
-		while(1) {
+		while(++count) {
 			auto pwd = input( std::string("\n  (") +
-				std::to_string(count++) + ") Input plain password: " );
+				std::to_string(count) + ") Input plain password: " );
 
 			std::cout << "\n" << rang::style::bold << "  sha1sum: " << rang::style::reset;
 			std::cout << pwd.sha1;

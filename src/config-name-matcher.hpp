@@ -17,11 +17,11 @@ public:
 		const std::vector<std::string>& names) {
 
 		std::map<std::string, ConfigItemInfo> allConf;
-		for(const ConfigItemInfo& conf: configurations)
+		for(auto& conf: configurations)
 			allConf[conf.name] = conf;
 
 		std::map<std::string, ConfigItemInfo> resultMap;
-		for(auto name: names) {
+		for(auto& name: names) {
 			auto matched = allConf.find(name);
 			if(matched == allConf.end()) {
 				std::cerr << rang::fg::red << "\n  error: unknown backup config name: `" <<
@@ -30,9 +30,10 @@ public:
 				ConfigItemInfo::printItemsToStream(std::cerr, configurations, "    ");
 				exit(1);
 			}
-			auto storaged = resultMap.find(name);
-			if(storaged != resultMap.end())
-				continue; // storaged
+			auto duplicated = resultMap.find(name);
+			if(duplicated != resultMap.end())
+				continue; // duplicated
+
 			resultMap[name] = matched->second;
 		}
 

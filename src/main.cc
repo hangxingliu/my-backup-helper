@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
 		return PasswordInput::startPwd2Sha1REPL();
 
 	// `backup-helper completion` => display bash completion scripts
-	if(argument.isCompletion && argument.configurations.size() == 0) {
+	if(argument.isCompletion && argument.configurations.empty()) {
 		cout << BashCompletionScripts::get();
 		return 0;
 	}

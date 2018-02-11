@@ -7,11 +7,11 @@
 #include "./build-options.hpp"
 
 const char* PROGRAM_NAME = "backup-helper";
-const char* VERSION = "1.2.0";
-const char* VERSION_DATE= "2018-01-30";
+const char* VERSION = "1.2.1";
+const char* VERSION_DATE= "2018-02-12";
 
-const std::vector<std::string> CONFIG_FILES = {
-	"backup-config.debug.json",
+const std::vector<std::string> CONFIG_FILES = { // NOLINT
+		"backup-config.debug.json",
 	"$HOME/.backup-config.json",
 	"/etc/backup-config.json"
 };

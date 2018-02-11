@@ -2,7 +2,7 @@
 
 My backup helper program. (Load Configurations then compress using **7za**)
 
-It has been tested on **Ubuntu 17.04** and ****. 
+It has been tested on **Ubuntu 17.04** and **Mac OS X**. 
 
 ## Build
 

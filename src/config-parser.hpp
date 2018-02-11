@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "../libs/gason.hpp"
@@ -11,8 +12,8 @@
 #include "./utils.hpp"
 
 
-#ifndef CONFIGPARSER_HPP
-#define CONFIGPARSER_HPP
+#ifndef CONFIG_PARSER_HPP
+#define CONFIG_PARSER_HPP
 
 class ConfigParser {
 
@@ -73,7 +74,7 @@ class ConfigParser {
 				switch (type) {
 
 				case ConfigValidator::TYPE_INVALID:
-					return setError(validator.getError() + '\n');
+					return setError(validator.getError() + "\n");
 
 				case ConfigValidator::TYPE_SUDO:
 					config.sudo = validator.getBoolean(); break;
@@ -164,8 +165,8 @@ class ConfigParser {
 	// ================================
 
 public:
-	ConfigParser(const std::string& fileContent, const std::string& filePath):
-		fileContent(fileContent), filePath(filePath) {}
+	ConfigParser(std::string fileContent, std::string filePath):
+		fileContent(std::move(fileContent)), filePath(std::move(filePath)) {}
 	~ConfigParser() { if(jsonStr != nullptr) free(jsonStr); }
 
 	std::string getError() { return error; }
@@ -174,4 +175,4 @@ public:
 
 };
 
-#endif // CONFIGPARSER_HPP
+#endif // CONFIG_PARSER_HPP
