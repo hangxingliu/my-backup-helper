@@ -25,6 +25,8 @@
 		"src-7z-9": {
 			"prefix": "src-7z9-",
 			"type": "7z",
+			"// this password is: 123456": "comment",
+			"password_sha1": "7c4a8d09ca3762af61e59520943dc26494f8941b",
 			"// max compression level": "comment",
 			"compression_level": 9,
 			"files": [
@@ -37,6 +39,7 @@
 			"type": "7z",
 			"sudo": true,
 			"description": "system etc folder",
+			"// this password is: 123456": "comment",
 			"password_sha1": "7c4a8d09ca3762af61e59520943dc26494f8941b",
 			"files": [
 				"// system config dir",

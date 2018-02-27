@@ -25,14 +25,27 @@ public:
 			auto stored = passwordMap.find(config.passwordSHA1);
 			std::string password = "";
 			if(stored == passwordMap.end()) {
-				auto pwd = PasswordInput::input();
-				password = pwd.plain;
-				if(pwd.sha1 != config.passwordSHA1) {
-					fprintf(stderr, "\n  error: sha1sum(password): %s", pwd.sha1.c_str());
-					fprintf(stderr, "\n         but expect is: %s", config.passwordSHA1.c_str());
-					exit(1);
+				const char MAX_TIMES = 3;
+				unsigned char currentTimes = 0;
+
+				while(currentTimes++ < MAX_TIMES) {
+					auto pwd = PasswordInput::input();
+					password = pwd.plain;
+					if(pwd.sha1 != config.passwordSHA1) {
+						fprintf(stderr, "\n  error: sha1sum(password): %s", pwd.sha1.c_str());
+						fprintf(stderr, "\n         but expect is: %s\n", config.passwordSHA1.c_str());
+
+						if(currentTimes < MAX_TIMES) {
+							fprintf(stderr, "\n  Sorry, try again:");
+							continue;
+						}
+						fprintf(stderr, "\n  %u incorrect password attempts\n", MAX_TIMES);
+						exit(1);
+					}
+
+					passwordMap[pwd.sha1] = password;
+					break;
 				}
-				passwordMap[pwd.sha1] = password;
 			} else {
 				password = stored->second;
 			}
