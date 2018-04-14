@@ -6,6 +6,20 @@ It has been tested on **Ubuntu 17.04** and **Mac OS X**.
 
 ## Build
 
+There have two ways to build and install it.
+
+The first way is to use cmake and make only:
+
+``` bash
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+```
+
+The second way is to use bash scripts:
+
 ``` bash
 ./check.sh # check dependencies, install packages follow its output
 ./build.sh # build it by CMake
