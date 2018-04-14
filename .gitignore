@@ -1,5 +1,6 @@
 # target folders
 bin
+build
 cmake-build*
 
 # idea
@@ -14,3 +15,7 @@ test/out
 # qt creator files:
 *.creator.user
 *.includes
+
+# CMake files
+CMakeLists.txt.user
+CMakeFiles
