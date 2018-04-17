@@ -58,6 +58,8 @@ class ConfigParser {
 
 		for(auto kv: configs) {
 			auto level = std::string("configurations.") + kv->key;
+			if(commentJSON.isComment(kv->key, kv->value))
+				continue;
 
 			JsonValue cfg = kv->value;
 			if(cfg.getTag() != JSON_OBJECT)
@@ -65,6 +67,12 @@ class ConfigParser {
 
 			ConfigItemInfo config;
 			config.name = std::string(kv->key);
+
+			if(config.name.empty())
+				return setInvalidConfig("`configurations` has a property with a empty key");
+
+			if(config.name == "all")
+				return setInvalidConfig("`configurations` has a property with key is reserved word: \"all\"");
 
 			std::vector<std::string> files;
 			for(auto it: cfg) {
@@ -149,7 +157,9 @@ class ConfigParser {
 			const char* key = it->key;
 			bool ok = false;
 
-			if(commentJSON.isComment(key, it->value)) continue;
+			if(commentJSON.isComment(key, it->value))
+				continue;
+
 			if(strcmp(key, "target_dir") == 0)
 				ok = parseTargetDirArray(it->value);
 			else if(strcmp(key, "configurations") == 0)

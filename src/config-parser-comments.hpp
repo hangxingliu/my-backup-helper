@@ -47,7 +47,7 @@ class CommentsInJSON {
 	const std::string prefix = "// ";
 	const std::string commentValue = "comment";
 	const char* prefixChars = prefix.c_str();
-	const unsigned int prefixLen = prefix.length();
+	const unsigned long prefixLen = prefix.length();
 public:
 	bool isComment(const char* key, JsonValue& value) {
 		for(unsigned i = 0 ; i < prefixLen ; i ++ )

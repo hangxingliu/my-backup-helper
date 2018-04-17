@@ -21,7 +21,20 @@ public:
 			allConf[conf.name] = conf;
 
 		std::map<std::string, ConfigItemInfo> resultMap;
+		auto isDuplicated = [&](const std::string& name) -> bool {
+			return resultMap.find(name) != resultMap.end();
+		};
+
 		for(auto& name: names) {
+			if(name == "all") {
+				for(auto& kv: allConf) {
+					if(isDuplicated(kv.first))
+						continue;
+					resultMap[kv.first] = kv.second;
+				}
+				continue;
+			}
+
 			auto matched = allConf.find(name);
 			if(matched == allConf.end()) {
 				std::cerr << rang::fg::red << "\n  error: unknown backup config name: `" <<
@@ -30,9 +43,8 @@ public:
 				ConfigItemInfo::printItemsToStream(std::cerr, configurations, "    ");
 				exit(1);
 			}
-			auto duplicated = resultMap.find(name);
-			if(duplicated != resultMap.end())
-				continue; // duplicated
+			if(isDuplicated(name))
+				continue;
 
 			resultMap[name] = matched->second;
 		}
