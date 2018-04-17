@@ -42,11 +42,17 @@ public:
 		if(argc <= 1)
 			printHelp();
 
+		bool afterDoubleDash = false;
 		for(int i = 1 ; i < argc ; i++) {
 			const char* opt = argv[i];
 			int len = strlen(opt);
 
 			if(len == 0) continue;
+			if(strcmp(opt, "--") == 0) {
+				afterDoubleDash = true;
+				continue;
+			}
+
 			if(i == 1) {
 				if(strcmp(opt, "list") == 0) {
 					isList = true;
@@ -66,14 +72,17 @@ public:
 				}
 			}
 
-			if(strcmp(opt, "-h") == 0 || strcmp(opt, "--help") == 0) {
-				printHelp();
-			} else if (strcmp(opt, "-V") == 0 || strcmp(opt, "--version") == 0) {
-				printVersion();
-			} else if(strcmp(opt, "-v") == 0 || strcmp(opt, "--verbose") == 0) {
-				isVerbose = true;
-				continue;
-			} else if(len >= 1 && opt[0] == '-') {
+			if(opt[0] == '-' && !afterDoubleDash) {
+				if(strcmp(opt, "-h") == 0 || strcmp(opt, "--help") == 0)
+					printHelp(); // exit(0);
+				if (strcmp(opt, "-V") == 0 || strcmp(opt, "--version") == 0)
+					printVersion(); // exit(0);
+
+				if(strcmp(opt, "-v") == 0 || strcmp(opt, "--verbose") == 0) {
+					isVerbose = true;
+					continue;
+				}
+
 				fprintf(stderr, "\n  error: unknown option `%s`\n\n", opt);
 				exit(1);
 			} else {
